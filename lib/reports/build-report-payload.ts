@@ -1,5 +1,5 @@
 import type {
-  Platform,
+  NormalizedPlatform,
   ClientType,
   PeriodMetrics,
   MetricFormat,
@@ -47,7 +47,7 @@ function getMetricValue(
 export function buildDeltaPayload(
   currentMetrics: PeriodMetrics,
   comparisonMetrics: PeriodMetrics,
-  platform: Platform,
+  platform: NormalizedPlatform,
   clientType: ClientType,
   connectionId: string
 ): DeltaPayload {

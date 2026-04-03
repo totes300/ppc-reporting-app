@@ -65,5 +65,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - For **any external library, integration, or API** where training data may be outdated, use the **Context7 MCP** (`resolve-library-id` then `query-docs`) to fetch the latest documentation before writing code.
 - For **Next.js 16** specifically, also check `node_modules/next/dist/docs/` — this version has breaking changes.
 
+### Debugging és hibajavítás
+
+1. **Diagnosztizálj mielőtt javítanál.** Ha egy érték rossz típusú, ne cast-olj/parseolj a fogyasztó oldalon — keresd meg, HONNAN jön a rossz érték (DB schema, API response, serialization boundary). Használj közvetlen lekérdezést (curl, node -e, SQL) az adat valódi alakjának ellenőrzésére.
+2. **Javítsd a forrást, ne a fogyasztót.** Ha a DB rossz típust ad vissza → migráció. Ha az API rossz shape-et küld → az API-t javítsd. Defenzív parse/cast a fogyasztó oldalon csak ideiglenes bridge lehet, soha nem a végleges megoldás.
+3. **Ne írj kódot amíg nem érted a hibát.** Egy wrapper 6 helyre szórva azt jelenti, hogy nem értetted meg miért rossz az adat — csak elfedted. Előbb értsd meg, aztán javíts egyetlen helyen.
+
 ### Important notes
 - The PRD and UI copy are in **Hungarian** — maintain this language in user-facing text

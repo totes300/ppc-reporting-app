@@ -40,6 +40,10 @@ values (
       "search_impression_share",
       "top_impression_share"
     ],
+    "account_query_exclude": [
+      "average_order_value",
+      "top_impression_share"
+    ],
     "account_table": {
       "webshop": [
         {"field": "clicks", "label": "Kattintás", "format": "num", "group": "forgalom"},

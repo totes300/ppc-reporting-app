@@ -85,7 +85,7 @@ A `(dashboard)` route group megmarad — a sidebar layout minden oldalon kell. A
 
 ---
 
-## Fázis 4: Claude AI integráció + riport generálás teljesítése ⬜
+## Fázis 4: Claude AI integráció + riport generálás teljesítése ✅
 
 **Cél:** AI szöveggenerálás → teljes riport pipeline.
 
@@ -103,7 +103,7 @@ A `(dashboard)` route group megmarad — a sidebar layout minden oldalon kell. A
 
 ---
 
-## Fázis 5: Riport szerkesztő ⬜
+## Fázis 5: Riport szerkesztő ✅
 
 **Cél:** A központi szerkesztő felület: metrika táblák, szövegszerkesztés, autosave, szekció kezelés.
 
