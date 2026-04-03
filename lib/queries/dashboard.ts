@@ -1,9 +1,16 @@
 import { createServerSupabaseClient } from "@/lib/supabase/server";
-import type { Client, Report, ClientConnection, Platform } from "@/lib/supabase/types";
+import {
+  normalizePlatform,
+  type Client,
+  type Report,
+  type ClientConnection,
+  type Platform,
+  type ConnectionWithPlatform,
+} from "@/lib/supabase/types";
 
 export interface DashboardClient {
   client: Client;
-  connections: (ClientConnection & { platform: Platform })[];
+  connections: ConnectionWithPlatform[];
   report: Report | null;
 }
 
@@ -35,10 +42,11 @@ export async function getDashboardData(
     reportMap.set(r.client_id, r);
   }
 
-  const connectionMap = new Map<string, (ClientConnection & { platform: Platform })[]>();
+  const connectionMap = new Map<string, ConnectionWithPlatform[]>();
   for (const c of (connections ?? []) as (ClientConnection & { platform: Platform })[]) {
+    const normalized: ConnectionWithPlatform = { ...c, platform: normalizePlatform(c.platform) };
     const arr = connectionMap.get(c.client_id) ?? [];
-    arr.push(c);
+    arr.push(normalized);
     connectionMap.set(c.client_id, arr);
   }
 

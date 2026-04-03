@@ -78,7 +78,6 @@ export function MonthlyGenerateDialog({
 
       const { reportId } = await res.json();
 
-      // Step 1 done, step 2 skipped (Phase 4), step 3 done
       setSteps([
         { label: "Adatok lehúzása", status: "done" },
         { label: "AI szövegek generálása", status: "done" },

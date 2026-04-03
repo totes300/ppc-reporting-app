@@ -27,6 +27,9 @@ export interface CampaignDisplay {
 
 export interface PlatformFieldsConfig {
   api_fields: string[];
+  /** Fields that break Windsor.ai account-level aggregation when included in the query.
+   *  These are excluded from the account query and derived from aggregated totals instead. */
+  account_query_exclude?: string[];
   account_table: Record<ClientType, AccountTableField[]>;
   campaign_table: Record<ClientType, string[]>;
   campaign_level: boolean;
@@ -46,6 +49,18 @@ export interface AgencySettings {
   updated_at: string;
 }
 
+/**
+ * Raw Platform row as returned by Supabase.
+ *
+ * `fields_config` is typed as `PlatformFieldsConfig | string` because the
+ * DB column was historically stored as text instead of jsonb. Migration
+ * 004_fix_fields_config_jsonb.sql corrected this, but the PostgREST schema
+ * cache may still serve a stale text representation until a project restart.
+ *
+ * All code that consumes Platform data should go through `normalizePlatform()`
+ * (in this module) to guarantee a parsed object. The query layer (`lib/queries/`)
+ * calls this automatically — application code should never need to call it.
+ */
 export interface Platform {
   id: string;
   slug: string;
@@ -53,11 +68,30 @@ export interface Platform {
   windsor_connector: string;
   icon_color: string;
   icon_letter: string;
-  fields_config: PlatformFieldsConfig;
+  fields_config: PlatformFieldsConfig | string;
   is_active: boolean;
   sort_order: number;
   created_at: string;
 }
+
+/** Platform with guaranteed parsed `fields_config`. */
+export type NormalizedPlatform = Omit<Platform, "fields_config"> & {
+  fields_config: PlatformFieldsConfig;
+};
+
+/**
+ * Single normalization point for Platform rows.
+ * Parses `fields_config` if it arrives as a string; no-op if already an object.
+ */
+export function normalizePlatform<T extends Platform>(platform: T): T & { fields_config: PlatformFieldsConfig } {
+  if (typeof platform.fields_config === "string") {
+    return { ...platform, fields_config: JSON.parse(platform.fields_config) as PlatformFieldsConfig };
+  }
+  return platform as T & { fields_config: PlatformFieldsConfig };
+}
+
+/** Convenience type: ClientConnection joined with a normalized Platform. */
+export type ConnectionWithPlatform = ClientConnection & { platform: NormalizedPlatform };
 
 export interface Client {
   id: string;

@@ -1,9 +1,11 @@
 import { createServerSupabaseClient } from "@/lib/supabase/server";
-import type {
-  Client,
-  ClientConnection,
-  Platform,
-  Report,
+import {
+  normalizePlatform,
+  type Client,
+  type ClientConnection,
+  type ConnectionWithPlatform,
+  type Platform,
+  type Report,
 } from "@/lib/supabase/types";
 
 export async function getActiveClients(): Promise<Client[]> {
@@ -28,14 +30,16 @@ export async function getClientById(id: string): Promise<Client | null> {
 
 export async function getClientConnections(
   clientId: string
-): Promise<(ClientConnection & { platform: Platform })[]> {
+): Promise<ConnectionWithPlatform[]> {
   const supabase = await createServerSupabaseClient();
   const { data } = await supabase
     .from("client_connections")
     .select("*, platform:platforms(*)")
     .eq("client_id", clientId)
     .eq("is_active", true);
-  return (data as (ClientConnection & { platform: Platform })[]) ?? [];
+  return ((data as (ClientConnection & { platform: Platform })[]) ?? []).map(
+    (c) => ({ ...c, platform: normalizePlatform(c.platform) })
+  );
 }
 
 export async function getClientReports(clientId: string): Promise<Report[]> {
